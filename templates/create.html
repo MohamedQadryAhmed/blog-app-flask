@@ -1,20 +1,21 @@
 {% extends 'layout.html' %}
 {% block title %} Add new Post {% endblock %}
 {% block body %}
-<h1> Add new Post  </h1>
-<form method="post">
+<h3 class=" mt-5 ms-5 pt-3"> Add new Post  </h3>
+<hr class="w-50 ms-5">
+<form method="post" class="w-50 m-5">
   <div class="mb-3">
     <label for="" class="form-label">Title</label>
     <input type="text"  name='title' class="form-control" >
   </div>
-    <div class="mb-3">
-    <label for="" class="form-label">body</label>
-    <input type="text"  name='body' class="form-control">
+  <div class="form-group">
+    <label for="exampleFormControlTextarea1">Body</label>
+    <textarea class="form-control" name="body" rows="3"></textarea>
   </div>
   <div class="mb-3">
     <label for="image" class="form-label">Image</label>
     <input type="text" name='image' class="form-control" id="image">
   </div>
-  <button type="submit" class="btn btn-success">Submit</button>
+  <button type="submit" class="btn btn-success mb-5">Submit</button>
 </form>
 {% endblock %}

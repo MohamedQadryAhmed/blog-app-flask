@@ -57,9 +57,22 @@ def create():
                           image=request.form['image'])
         db.session.add(post)
         db.session.commit()
-        return redirect(url_for('post.show'))
+        return redirect(url_for('blog.home'))
 
     return render_template('create.html')
+
+def delete_post(id):
+    post= Blog.query.get_or_404(id)
+    if post:
+       db.session.delete(post)
+       db.session.commit()
+       return redirect(url_for('blog.home'))
+    else:
+        return  '<h1> Object not found </h1>', 404
+
+app.add_url_rule('/home/<int:id>/delete',
+                 view_func=delete_post,
+                 endpoint='post.delete', methods=['GET'])
 
 
 if __name__ == '__main__':

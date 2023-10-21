@@ -3,17 +3,17 @@
 {% block title %}Home{% endblock %}
 
 {% block body %}
-<div class="row row-cols-md-6 g-4 mt-2">
+<div class="row row-cols-md-6 g-4 mt-2 ms-5">
     {% for post in posts %}
     <div class="card m-4" style="width: 16rem;">
         <img src="" class="card-img-top mt-2" height="150px">
         <div class="card-body">
             <h3>{{post.title}}</h3>
-            <h6 class="text-muted">{{post.created_at}}</h6> 
+            <h6 class="text-muted">{{post.craeted_at}}</h6> 
             <div class="row">
                 <a class="col-10 m-2 btn btn-success" href="{{url_for('post.show', id=post.id)}}">Show</a>
                 <a class="col-4 m-2 btn btn-warning" href="">Edit</a>
-                <a class="col-4 m-2 btn btn-danger" href="">Delete</a>
+                <a class="col-4 m-2 btn btn-danger" href="{{url_for('post.delete' , id=post.id)}}">Delete</a>
             </div>
         </div>
     </div>
@@ -21,6 +21,6 @@
     {% endfor %}
     
 </div>
-<div class="btn btn-outline-primary" href="{{url_for('post.create')}}">Add New Post</div>
+<a class="btn btn-outline-success mb-5" href="{{url_for('post.create')}}">Add New Post</a>
 
 {% endblock %}
