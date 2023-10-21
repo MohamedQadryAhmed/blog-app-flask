@@ -7,8 +7,13 @@
       rel="stylesheet"
       href="{{url_for('static', filename='bootstrap/css/bootstrap.css')}}"
     />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='bootstrap/css/fontawesome.min.css')}}"
+      type="text/css"
+    />
   </head>
-  <body>
+  <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg bg-body-secondary">
       <div class="container-fluid">
         <a class="navbar-brand ms-5" href="#">Blog App</a>
@@ -81,5 +86,6 @@
       </div>
     </footer>
     <script src="{{url_for('static', filename='bootstrap/js/bootstrap.js')}}"></script>
+    <script src="{{url_for('static', filename='bootstrap/js/fontawesome.min.js')}}"></script>
   </body>
 </html>
