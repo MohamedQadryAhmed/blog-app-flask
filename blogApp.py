@@ -1,12 +1,21 @@
 from datetime import datetime
 from flask import Flask , render_template , url_for , request , redirect
 from flask_sqlalchemy import SQLAlchemy
-
+from werkzeug.utils import secure_filename
+from flask_wtf import FlaskForm
+from wtforms.validators import DataRequired, EqualTo, Length
+from flask_ckeditor import CKEditorField
+from flask_wtf.file import FileField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, ValidationError, TextAreaField
 
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///blog.db"
 db = SQLAlchemy(app)
+
+import os
+SECRET_KEY = os.urandom(32)
+app.config['SECRET_KEY'] = SECRET_KEY
 # db.__init__(app)
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,8 +40,12 @@ class Blog(db.Model):
     @property
     def get_delete_url(self):
         return  url_for('post.delete', id= self.id)
-    
 
+class PostForm(FlaskForm):
+    title = StringField("Title", validators=[DataRequired()])
+    body = StringField('Content', validators=[DataRequired()])
+    image = StringField("Image")
+    submit = SubmitField("Submit")
 
 @app.route('/')
 @app.route('/home', endpoint='blog.home')
@@ -52,15 +65,32 @@ def get_post(id):
 @app.route('/home/create', methods=['GET', 'POST'], endpoint='post.create')
 def create():
     if request.method == 'POST':
-        print("request received", request.form)
+
+        # print("request received", request.form)
         post = Blog(title=request.form['title'], body=request.form['body'],
-                          image=request.form['image'])
+                          image=request.form['img'])
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('blog.home'))
 
     return render_template('create.html')
 
+@app.route('/home/edit/<int:id>', methods=['GET', 'POST'], endpoint='post.edit')
+def edit_post(id):
+    post = Blog.query.get_or_404(id)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.body = form.body.data
+        post.image = form.image.data
+        db.session.add(post)
+        db.session.commit()
+        return redirect(url_for('post.show', id=post.id))
+    form.title.data = post.title
+    form.body.data = post.body
+    form.image.data = post.image
+    return render_template('edit.html', form=form)
+    return 'edit'
 def delete_post(id):
     post= Blog.query.get_or_404(id)
     if post:

@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block title %} Edit {% endblock %}
+{% block body %}
+<h3 class=" mt-5 ms-5 pt-3"> Edit Post  </h3>
+<hr class="w-50 ms-5">
+<form method="post" class="w-50 m-5">
+    {{ form.hidden_tag() }}
+    {{ form.title.label(class="form-label") }}
+
+	{{ form.title(class="form-control") }}
+	<br/>
+    {{ form.body.label(class="form-label") }}
+
+	{{ form.body(class="form-control", rows="10" , cols="3") }}
+	<br/>
+    {{ form.image.label(class="form-label") }}
+
+		{{ form.image(class="form-control") }}
+		<br/>
+		
+		
+
+		
+		{{ form.submit(class="btn btn-secondary") }}
+</form>
+{% endblock %}
