@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from flask import Flask , render_template , url_for , request , redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -17,6 +18,10 @@ import os
 SECRET_KEY = os.urandom(32)
 app.config['SECRET_KEY'] = SECRET_KEY
 # db.__init__(app)
+
+app.config['UPLOAD_FOLDER'] = 'static/images'
+os.makedirs(app.config['UPLOAD_FOLDER'],exist_ok=True)
+
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String)
@@ -27,7 +32,7 @@ class Blog(db.Model):
 
     @property
     def get_image_url(self):
-        return url_for('static', filename=f'posts/images/{self.image}')
+        return url_for('static', filename=f'images/{self.image}')
 
     @property
     def get_show_url(self):
@@ -41,11 +46,6 @@ class Blog(db.Model):
     def get_delete_url(self):
         return  url_for('post.delete', id= self.id)
 
-class PostForm(FlaskForm):
-    title = StringField("Title", validators=[DataRequired()])
-    body = StringField('Content', validators=[DataRequired()])
-    image = StringField("Image")
-    submit = SubmitField("Submit")
 
 @app.route('/')
 @app.route('/home', endpoint='blog.home')
@@ -65,10 +65,12 @@ def get_post(id):
 @app.route('/home/create', methods=['GET', 'POST'], endpoint='post.create')
 def create():
     if request.method == 'POST':
-
+        image = request.files['image']
+        image_url = secure_filename(image.filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'],image_url))
         # print("request received", request.form)
         post = Blog(title=request.form['title'], body=request.form['body'],
-                          image=request.form['img'])
+                          image=image_url)
         db.session.add(post)
         db.session.commit()
         return redirect(url_for('blog.home'))
@@ -78,19 +80,23 @@ def create():
 @app.route('/home/edit/<int:id>', methods=['GET', 'POST'], endpoint='post.edit')
 def edit_post(id):
     post = Blog.query.get_or_404(id)
-    form = PostForm()
-    if form.validate_on_submit():
-        post.title = form.title.data
-        post.body = form.body.data
-        post.image = form.image.data
-        db.session.add(post)
+    if request.method == 'POST':
+        if request.files['image']:
+            image = request.files['image']
+            image_url = post.image
+            os.remove(app.config['UPLOAD_FOLDER']+"/"+image_url)
+            image.save(os.path.join(app.config['UPLOAD_FOLDER'],image.filename))
+            post.image = image.filename
+        
+        post.title = request.form['title']
+        post.body = request.form['body']
         db.session.commit()
-        return redirect(url_for('post.show', id=post.id))
-    form.title.data = post.title
-    form.body.data = post.body
-    form.image.data = post.image
-    return render_template('edit.html', form=form)
-    return 'edit'
+        return render_template('show.html', post=post)
+    return render_template('edit.html',post=post)
+                       
+
+    
+    
 def delete_post(id):
     post= Blog.query.get_or_404(id)
     if post:

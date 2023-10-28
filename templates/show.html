@@ -13,7 +13,7 @@
         <h5 class="card-title fs-2">{{post.title}}</h5>
         <p class="card-text">{{post.body}}</p>
         <p class="card-text"><small class="text-body-secondary">{{post.craeted_at.strftime('%Y-%m-%d %H:%M')}}</small></p>
-        <a href="{{url_for('blog.home', id=post.id)}}" class="btn btn-success">Go Back</a>
+        <a href="{{url_for('blog.home')}}" class="btn btn-success">Go Back</a>
         <a class="col-3 m-2 btn btn-outline-secondary" href="{{url_for('post.edit', id=post.id)}}">Edit</a>
         <a class="col-3 m-2 btn btn-outline-secondary" href="{{url_for('post.delete' , id=post.id)}}">Delete</a>
       </div>
